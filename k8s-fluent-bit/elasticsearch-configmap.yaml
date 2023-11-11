@@ -1,0 +1,8 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: elasticsearch-configmap
+  namespace: logging
+data:
+  FLUENT_ELASTICSEARCH_HOST: 'elk.sba-private.com'
+  FLUENT_ELASTICSEARCH_PORT: '9200'
