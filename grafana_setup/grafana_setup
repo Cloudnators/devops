@@ -1,0 +1,61 @@
+How to setup the Grafana Server For the Monitoring of the linux server 
+......................................................................
+
+Fist Update the Server 
+sudo apt update
+
+Adding the key 
+sudo wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
+sudo apt install -y software-properties-common
+sudo add-apt-repository "deb https://packages.grafana.com/oss/deb stable main"
+sudo apt update
+sudo apt install grafana 
+sudo systemcl start grafana
+sudo systemctl enable grafana
+sudo systemctl status grafana
+apply the port 3000 for the grafana 
+access the grafana with ip:3000
+
+Installing the prometheus as a database to collect the metrics 
+...............................................................
+
+sudo apt install prometheus -y
+Configure Prometheus by editing /etc/prometheus/prometheus.yml. Add your targets and other configurations.
+sudo systemctl restart prometheus
+
+Access the prometheus dashboard ip:9090 
+
+Installing the Node Exporter for the exporting metrics 
+...........................................................
+
+wget https://github.com/prometheus/node_exporter/releases/download/v1.7.0/node_exporter-1.7.0.linux-amd64.tar.gz
+tar xvfz node_exporter-1.7.0.linux-amd64.tar.gz
+sudo cp node_exporter-1.7.0.linux-amd64/node_exporter /usr/local/bin/
+
+Create the Service file for the node expoter 
+.......................................
+
+first create the user and the group for the node exporter
+sudo useradd -rs /bin/false node_exporter
+give the proper permission to files to user to work 
+
+sudo vim /etc/systemd/system/node_exporter.service
+[Unit]
+Description=Node Exporter
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=node_exporter
+Group=node_exporter
+Type=simple
+ExecStart=/usr/local/bin/node_exporter
+
+[Install]
+WantedBy=multi-user.target
+
+sudo systemctl daemon-reload
+sudo systemctl start node_exporter
+sudo systemctl enable node_exporter
+
+access the metric with ip:9100
